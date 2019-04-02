@@ -1,5 +1,7 @@
 _This is an assignment to the [Software Architecture](https://ohm-softa.github.io) class at the [Technische Hochschule Nürnberg](http://www.th-nuernberg.de)._
 
+![Build state](https://travis-ci.org/hsro-inf-prg3/02-classes-interfaces.svg?branch=musterloesung)
+
 # Assignment 2: Classes and interfaces revisited
 
 In this assignment we'll be looking at 

@@ -6,65 +6,126 @@ import java.util.Iterator;
  * @author Peter Kurfer
  * Created on 10/6/17.
  */
-public class SimpleListImpl implements SimpleList, Iterable {
-    private static class Element {
-        Object item;
-        Element next;
 
-        public Element(Object item) {
-            this.item = item;
-        }
+    public class SimpleListImpl implements SimpleList, Iterable<Object> {
+
+    private ListElement head;
+    private int size;
+
+    public SimpleListImpl() {
+        head = null;
     }
 
-    Element head;
-    int size = 0;
-
-    @Override
-    public void add(Object o) {
+    /**
+     * Add an object to the end of the list
+     * @param item item to add
+     */
+    public void add(Object item){
+        /* special case empty list */
+        if(head == null){
+            head = new ListElement(item);
+        }else {
+            /* any other list length */
+            ListElement current = head;
+            while (current.getNext() != null){
+                current = current.getNext();
+            }
+            current.setNext(new ListElement(item));
+        }
         size++;
-        if (head == null) {
-            head = new Element(o);
-            return;
-        }
-
-        Element current = head;
-        while (current.next != null) {
-            current = current.next;
-        }
-        current.next = new Element(o);
     }
 
-    @Override
+    /**
+     * @return size of the list
+     */
     public int size() {
         return size;
     }
 
-    @Override
-    public SimpleList filter(SimpleFilter filter) {
-        SimpleListImpl sl = new SimpleListImpl();
-        for (Object o : this)
-            if (filter.include(o)) sl.add(o);
-        return sl;
+
+    /**
+     * Get a new SimpleList instance with all items of this list which match the given filter
+     * @param filter SimpleFilter instance
+     * @return new SimpleList instance
+     */
+    public SimpleList filter(SimpleFilter filter){
+        SimpleList result = new SimpleListImpl();
+        for(Object o : this){
+            if(filter.include(o)){
+                result.add(o);
+            }
+        }
+        return result;
     }
 
+    /**
+     * @inheritDoc
+     */
     @Override
-    public Iterator iterator() {
-        return new SimpleIteratorImpl();
+    public Iterator<Object> iterator() {
+        return new SimpleIterator();
     }
 
+    /**
+     * Helper class which implements the Iterator<T> interface
+     * Has to be non static because otherwise it could not access the head of the list
+     */
+    private class SimpleIterator implements Iterator<Object> {
 
-    class SimpleIteratorImpl implements Iterator{
-        Element current = head;
+        private ListElement current = head;
 
+        /**
+         * @inheritDoc
+         */
         @Override
-        public boolean hasNext(){
-           return current!=null;
+        public boolean hasNext() {
+            return current != null;
         }
 
+        /**
+         * @inheritDoc
+         */
         @Override
-        public Object next(){
-            Object o = current.item;
-            return o;
+        public Object next() {
+            Object tmp = current.getItem();
+            current = current.getNext();
+            return tmp;
+        }
+    }
+
+    /**
+     * Helper class for the linked list
+     * can be static because the ListElement does not need to access the SimpleList instance
+     */
+    private static class ListElement {
+        private Object item;
+        private ListElement next;
+
+        ListElement(Object item) {
+            this.item = item;
+            this.next = null;
+        }
+
+        /**
+         * @return get object in the element
+         */
+        public Object getItem() {
+            return item;
+        }
+
+        /**
+         * @return successor of the ListElement - may be NULL
+         */
+        public ListElement getNext() {
+            return next;
+        }
+
+        /**
+         * Sets the successor of the ListElement
+         * @param next ListElement
+         */
+        public void setNext(ListElement next) {
+            this.next = next;
         }
     }
 }
