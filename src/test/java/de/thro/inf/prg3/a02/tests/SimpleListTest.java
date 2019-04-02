@@ -65,4 +65,15 @@ public class SimpleListTest {
 			assertTrue(i % 2 == 0);
 		}
 	}
+
+	@Test
+	void testDrittesElement(){
+		SimpleListImpl result = (SimpleListImpl) testList.filter(new SimpleFilter() {
+			int count=0;
+			@Override
+			public boolean include(Object item) {
+				return ++count %3==0;
+			}
+		});
+	}
 }
